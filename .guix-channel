@@ -1,0 +1,4 @@
+;; This is a Guix channel.
+
+(channel
+  (version 0)) ;the primary URL
