@@ -53,7 +53,17 @@
                 "0hrw22ihrzph573lkwys6g5bnj72rwff1w1wjq0jzkcr3i8zai86"))))
     (build-system qt-build-system)
     (arguments
-     '(#:tests? #f))
+      (list #:phases
+        #~(modify-phases %standard-phases
+          (add-before 'configure 'set-polkit-rules-dir
+            ;; Locate actions in our {output,etc-dir}, not that of the polkit input.
+            (lambda _
+              (setenv "PKG_CONFIG_POLKIT_GOBJECT_1_ACTIONDIR"
+                ;; This makes it 'Just Work':
+                (string-append #$output "/share/polkit-1/actions")
+                ;; This only makes it work when we extend polkit-service-type:
+                ;; (string-append "/etc/polkit-1/actions")
+                ))))))
      (native-inputs
      (list extra-cmake-modules pkg-config qttools-5))
     (inputs (list
@@ -78,4 +88,4 @@
 into KDE's System Settings and serves the purpose of configuring the
 Simple Desktop Display Manager (SDDM) - the recommended display manager
 for KDE Plasma.")
-    (license license:gpl2+)))           ;<all other files>
+    (license license:gpl2+)))
